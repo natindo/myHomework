@@ -20,7 +20,6 @@ int main() {
     int n1, n2,str;
     n1 = n2 = str = i = j = flag = 0;
     FILE * text = fopen("table.txt", "r"); // открываем файл
-    int final[200] = {};
 
     if (!text) return -1; // проверяем открылся ли
 
@@ -32,6 +31,7 @@ int main() {
 
     arr = (char **)malloc((str + 1) * sizeof(char *)); // arr - массив со всеми данными
     num = (int*) malloc((str + 1) * sizeof(int));
+    int* final = (int*) malloc((str + 1) * sizeof(int));
     rewind(text);
 
     while (!feof(text)) { //подсчёт данных на каждой строчке
@@ -92,13 +92,36 @@ int main() {
 
     for (i = 1; i < 4; i++) {
         for (j = 2; j < 8; j++) {
+
+            if (j > (i * 2)) 
+                arr[i][j] = 0;
+
+        }
+    }
+
+    printf("\n");
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 8; j++) {
+            printf ("%c", arr[i][j]);
+        }
+        printf("\n");
+    }
+
+    for (i = 1; i < 4; i++) {
+        for (j = 2; j < 8; j++) {
             //printf("%c\n", arr[j][i]);
             if ((arr[i][j] <= '9') && (arr[i][j] >= '1')){
+                for (int k = 1; k <= (arr[i][j] - '0'); k++) {
+                    final[number] = i;
+                    final[number + 1] = ceil (j / 2);
+                    number = number + 2;
+                }
                 //line = i;
                 //col = j;
-                final[number] = i;
-                final[number + 1] = j;
-                number = number + 2;
+                //final[number] = i;
+                //final[number + 1] = ceil (j / 2);
+                //number = number + 2;
                 //printf("%c\n", arr[i][j]);
                 //printf ("%c\n", firstNum);
             
@@ -109,17 +132,24 @@ int main() {
     for (i = 0; i < number; i++) {
         printf("%2d", final[i]);
     }
-    
+  
 
     FILE * graph = fopen("g.gv", "w"); // открываем файл
 
+    //printf ("%d\n", final[0]);
+
     fprintf (graph, "%s\n", "graph G { ");
-    for (i = 0; i < number; i = i + 2) {
-        fprintf (graph, "%d -- %d", final[i], final[i++]);
+    for (i = 0; i < number; i++) {
+        fprintf (graph, "\t%d -- ", final[i]);
+        fprintf (graph, "%d", final[++i]);
         fprintf (graph, "%s\n", " ");
     }
-    fprintf (graph, "%s\n", " ");
     fprintf (graph, "%s", "}");
+
+    system ("dot -Tpng g.gv -o file.png");
+    system ("wslview file.png");
+
+    
   
     return 0;
 }
