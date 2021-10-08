@@ -2,28 +2,26 @@
 #include <math.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
     //проверять указатели на NULL
     //освобождать память полсе выхода из функции
     //зануть указатели после free
     //графы могут иметь петли и двойные рёбра (мб больше
-    //выводить граф илибо на dot, GraphViz и system (можно подключить фреймовки для визуализации)
-    //срок сдачи 15 (стоит 8)
     //Андрей Миронов
-    //2 семенар
 
-int main() {
+int main(void) {
     char **arr;
-    int flag,i,j;
+    int i,j;
     int buffer;
     int * num;
-    int n1, n2,str;
-    n1 = n2 = str = i = j = flag = 0;
+    int n1,str;
+    n1 = str = i = j = 0;
     FILE * text = fopen("table.txt", "r"); // открываем файл
 
     if (!text) return -1; // проверяем открылся ли
 
-    rewind(text); // Ставим указатель внутри файла на первое место (проверить)
+    rewind(text); // Ставим указатель внутри файла на первое место
     char c;
 
     for (c = getc(text); c != EOF; c = getc(text)) // Подсчёт кол-ва символов в файле
@@ -31,12 +29,14 @@ int main() {
 
     arr = (char **)malloc((str + 1) * sizeof(char *)); // arr - массив со всеми данными
     num = (int*) malloc((str + 1) * sizeof(int));
-    int* final = (int*) malloc((str + 1) * sizeof(int));
     rewind(text);
+
+    int col = 0;
 
     while (!feof(text)) { //подсчёт данных на каждой строчке
         buffer = fgetc(text);
         n1++;
+        col = n1;
         if (buffer == '\n') {
             num[i] = n1; // num - хранит данные о том, сколько символов в каждой строчке
             i++;
@@ -44,7 +44,7 @@ int main() {
         }
     }
 
-    int strelen = i; // хранит данные о том, сколько строк в файле
+    int strelen = ++i; // хранит данные о том, сколько строк в файле
 
     num[str] = n1;
     rewind(text);
@@ -65,78 +65,33 @@ int main() {
         }
     }
 
-    fclose(text);
-    text == NULL;
+    fclose (text);
 
-/*    for (i = 0; i < 4; i++) {
-        for (j = 1; j < 8; j++) {
-            if (arr[i][j] == ' ') {
-                arr[i][j] = arr[i][j+1];
-                for (int g = j+1; g < 8; g++) {
-                    arr[i][g] = arr[i][g+1];           попытка удалить пробелы
-                }
-            }
-        }
-    }
+    int number = 0;
 
-    */
-
-    for (i = 0; i < 4; i++) {
-        for (j = 0; j < 8; j++) {
-            printf ("%c", arr[i][j]);
-        }
-        printf("\n");
-    }
-
-    int line = 0, col = 0, number = 0; // col - столбец
-
-    for (i = 1; i < 4; i++) {
-        for (j = 2; j < 8; j++) {
-
+    for (i = 1; i < strelen; i++) {
+        for (j = 2; j < col; j++) {
             if (j > (i * 2)) 
                 arr[i][j] = 0;
 
         }
     }
 
-    printf("\n");
+    int* final = (int*) malloc((str + 1) * sizeof(int));
 
-    for (i = 0; i < 4; i++) {
-        for (j = 0; j < 8; j++) {
-            printf ("%c", arr[i][j]);
-        }
-        printf("\n");
-    }
-
-    for (i = 1; i < 4; i++) {
-        for (j = 2; j < 8; j++) {
-            //printf("%c\n", arr[j][i]);
+    for (i = 1; i < strelen; i++) {
+        for (j = 2; j < col; j++) {
             if ((arr[i][j] <= '9') && (arr[i][j] >= '1')){
                 for (int k = 1; k <= (arr[i][j] - '0'); k++) {
                     final[number] = i;
                     final[number + 1] = ceil (j / 2);
                     number = number + 2;
                 }
-                //line = i;
-                //col = j;
-                //final[number] = i;
-                //final[number + 1] = ceil (j / 2);
-                //number = number + 2;
-                //printf("%c\n", arr[i][j]);
-                //printf ("%c\n", firstNum);
-            
             }
         }
-    }
-
-    for (i = 0; i < number; i++) {
-        printf("%2d", final[i]);
-    }
-  
+    }  
 
     FILE * graph = fopen("g.gv", "w"); // открываем файл
-
-    //printf ("%d\n", final[0]);
 
     fprintf (graph, "%s\n", "graph G { ");
     for (i = 0; i < number; i++) {
@@ -147,10 +102,30 @@ int main() {
     fprintf (graph, "%s", "}");
 
     system ("dot -Tpng g.gv -o file.png");
-    system ("wslview file.png");
+    //system ("wslview file.png");
 
-    
-  
+    fclose (graph);
+
+//если все читлса содержаться по 2 раза в массиве из dot файла то граф точно цикл
+
+    int counter[8] = {};
+
+    for (i = 0; i < number; i++) {
+        counter[final[i]]++;
+    }
+
+    for (i = 0; i <= 9; i++) {
+
+        if (counter[i] == 0 || counter[i] == 2) {
+            ;
+        } else {
+            exit(1);
+        }
+        //printf (" %d", counter[i]);
+    }
+
+        printf ("\nграф - цикл\n");
+
     return 0;
 }
-/* Пишем массив в котором последовательно идут числа которые что-то згачат на графе a и b, мы пишем как сказаны в пред комментрии и всё отлично*/
+
