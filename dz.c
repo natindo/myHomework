@@ -19,7 +19,8 @@ int main(void) {
     n1 = str = i = j = 0;
     FILE * text = fopen("table.txt", "r"); // открываем файл
 
-    if (!text) return -1; // проверяем открылся ли
+    if (!text) 
+        return 2; // проверяем открылся ли
 
     rewind(text); // Ставим указатель внутри файла на первое место
     char c;
@@ -101,14 +102,12 @@ int main(void) {
     }
     fprintf (graph, "%s", "}");
 
-    system ("dot -Tpng g.gv -o file.png");
-    //system ("wslview file.png");
+    system("dot -Tpng g.gv -o '1.png'");
+    //system("wslview 1.png");
 
     fclose (graph);
 
-//если все читлса содержаться по 2 раза в массиве из dot файла то граф точно цикл
-
-    int counter[8] = {};
+    int counter[9] = {};
 
     for (i = 0; i < number; i++) {
         counter[final[i]]++;
@@ -121,10 +120,9 @@ int main(void) {
         } else {
             exit(1);
         }
-        //printf (" %d", counter[i]);
     }
 
-        printf ("\nграф - цикл\n");
+        printf ("граф - простой цикл\n");
 
     return 0;
 }
