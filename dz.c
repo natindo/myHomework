@@ -4,12 +4,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-    //проверять указатели на NULL
-    //освобождать память полсе выхода из функции
-    //зануть указатели после free
-    //графы могут иметь петли и двойные рёбра (мб больше
-    //Андрей Миронов
-
 int main(void) {
     char **arr;
     int i,j;
@@ -67,7 +61,6 @@ int main(void) {
     }
 
     fclose (text);
-
     int number = 0;
 
     for (i = 1; i < strelen; i++) {
